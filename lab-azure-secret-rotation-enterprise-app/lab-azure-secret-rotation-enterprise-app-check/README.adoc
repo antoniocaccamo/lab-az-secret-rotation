@@ -1,0 +1,125 @@
+= func-enterprise-app-secret-check
+//:toc:
+:sectnums:
+
+For a give list of owners, it collects their Enterprise Apps and checks if Password Credentials are near to expiry or expired and generates related events.
+
+Parameters:
+[horizontal]
+`ENTERPRISE_APPS_CHECK`:: JSON array containing name of Enterprice App to check  and recipients to send mail, as follow: +
+      `[{"applicationId":"254207e6-xxx","recipients":"email.01@example.org"},
+       {"applicationId":"a556add5-yyy","recipients":"email.02@example.org"}]`
+
+`ENTERPRISE_APPS_CHECK_EXPIRING_PERIOD` :: days before considering a password near to expiring   (optional, default 30 days)
+`EVENT_GRID_ENTERPRISE_APP_ENDPOINT`:: End point url of enterprise app event grid
+
+== Enterprise App Events
+
+The value of events:
+
+* `EnterpriseApp.PasswordCredentialNearExpiry`
+* `EnterpriseApp.PasswordCredentialNearExpiryAndCreate`
+* `EnterpriseApp.PasswordCredentialExpired`
+* `EnterpriseApp.PasswordCredentialExpiredAndCreate`
+
+are not defined by Azure, but they were logically defined in this context.
+
+
+=== Examples
+
+.Example of `EnterpriseApp.PasswordCredentialNearExpiry` event sent
+[source, json]
+----
+{
+  "id": "0c5bcc11-..................",
+  "subject": "Application [semperis-dsp-i] PasswordCredential [semperis-dsp-i-cred]",
+  "data": {
+    "EXP": "2024-07-20T22:00:00Z",
+    "ApplicationAppId": "69ba3c0e-..................",
+    "PasswordCredentialDisplayName": "semperis-dsp-i-cred",
+    "ApplicationId": "812debf6-..................",
+    "ApplicationDisplayName": "semperis-dsp-i",
+    "endusers-recipients": "upn.01.@exmple.com",
+    "PasswordCredentialId": "a72f83c7-.................."
+  },
+  "eventType": "EnterpriseApp.PasswordCredentialNearExpiry",
+  "dataVersion": "1",
+  "metadataVersion": "1",
+  "eventTime": "2023-10-02T12:01:30.2659696Z",
+  "topic": "/subscriptions/908894ac-................../resourceGroups/rg-......./providers/Microsoft.EventGrid/topics/evtgrid-.....-topic"
+}
+----
+
+.Example of `EnterpriseApp.PasswordCredentialExpired` event sent
+[source, json]
+----
+{
+  "id": "0c5bcc11-..................",
+  "subject": "Application [semperis-dsp-i] PasswordCredential [semperis-dsp-i-cred]",
+  "data": {
+    "EXP": "2024-07-20T22:00:00Z",
+    "ApplicationAppId": "69ba3c0e-..................",
+    "PasswordCredentialDisplayName": "semperis-dsp-i-cred",
+    "ApplicationId": "812debf6-..................",
+    "ApplicationDisplayName": "semperis-dsp-i",
+    "endusers-recipients": "upn.01.@exmple.com",
+    "PasswordCredentialId": "a72f83c7-.................."
+  },
+  "eventType": "EnterpriseApp.PasswordCredentialExpired",
+  "dataVersion": "1",
+  "metadataVersion": "1",
+  "eventTime": "2023-10-02T12:01:30.2659696Z",
+  "topic": "/subscriptions/908894ac-................../resourceGroups/rg-......./providers/Microsoft.EventGrid/topics/evtgrid-.....-topic"
+}
+----
+
+== Data Flow
+
+image::../../../docs/images/secret-rotation-enterprice-app.png[width=700]
+
+== Decisional Algorithm
+
+
+image::../../../docs/images/enterprise-app/strategy.enh.png[width=800]
+
+
+[appendix]
+== Look up
+[source, bash]
+----
+az rest -m get -u 'https://graph.microsoft.com/v1.0/users?$search="userPrincipalName:me.ext@xxxx.onmicrosoft.com"&$count=true' \
+--headers ConsistencyLevel=eventual
+
+userid=8d50632b-....
+
+az rest -m get -u 'https://graph.microsoft.com/v1.0/users/$userid/ownedObjects/microsoft.graph.application'
+
+
+----
+[appendix]
+== Assign roles
+[source, bash]
+----
+# get id for  User Assigned Identity principal
+userAssignedIdentity="mi-secret-rotation-enterprise-app-check"
+principalId=$(az ad sp list --display-name $userAssignedIdentity  --query "[0].id" -o tsv)
+
+# get id for
+# graphId=$(az ad sp list --query "[?appDisplayName=='Microsoft Graph'].id | [0]" -o tsv --all)
+graphId=$(az ad sp list --display-name 'Microsoft Graph' --query  "[0].id" -o tsv --all)
+
+# retrieve id for require Microsoft Graph permissions
+appRoles=( "User.Read.All" "Application.Read.All")
+allowedMemberTypes=Application
+
+# appRole loop
+for appRole in "${appRoles[@]}"; do
+  echo "assign \"$appRole\" to user assigned managed identity \"$userAssignedIdentity\""
+  appRoleId=$(az ad sp list --display-name "Microsoft Graph" --query "[0].appRoles[?value=='$appRole' && contains(allowedMemberTypes, '$allowedMemberTypes')].id" -o tsv)
+  echo "{ \"principalId\" : \"$principalId\", \"resourceId\"  : \"$graphId\", \"appRoleId\"   : \"$appRoleId\" }" > assign."$appRole".json
+  az rest --method post \
+    --uri https://graph.microsoft.com/v1.0/servicePrincipals/$principalId/appRoleAssignments \
+    --body @assign.$appRole.json \
+    --headers Content-Type=application/json
+done
+----

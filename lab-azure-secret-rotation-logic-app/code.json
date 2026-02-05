@@ -1,0 +1,83 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Send_an_email_(V2)": {
+        "inputs": {
+          "body": {
+            "Body": "<p>@{triggerBody()['data']['bodyHtml']}</p>",
+            "Importance": "Normal",
+            "Subject": "@triggerBody()?['eventType']",
+            "To": "@{triggerBody()['data']['endusers-recipients']}"
+          },
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['outlook']['connectionId']"
+            }
+          },
+          "method": "post",
+          "path": "/v2/Mail"
+        },
+        "runAfter": {},
+        "type": "ApiConnection"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "When_a_resource_event_occurs": {
+        "inputs": {
+          "body": {
+            "properties": {
+              "destination": {
+                "endpointType": "webhook",
+                "properties": {
+                  "endpointUrl": "@{listCallbackUrl()}"
+                }
+              },
+              "topic": "/subscriptions/908894ac-5f7e-40ea-ab31-f2cdf88a53e3/resourceGroups/rg-secret-logicapp-sendmail/providers/Microsoft.EventGrid/topics/evtgrid-secret-logicapp-sendmail-topic"
+            }
+          },
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['azureeventgrid_1']['connectionId']"
+            }
+          },
+          "path": "/subscriptions/@{encodeURIComponent('908894ac-5f7e-40ea-ab31-f2cdf88a53e3')}/providers/@{encodeURIComponent('Microsoft.EventGrid.Topics')}/resource/eventSubscriptions",
+          "queries": {
+            "x-ms-api-version": "2017-09-15-preview"
+          }
+        },
+        "splitOn": "@triggerBody()",
+        "type": "ApiConnectionWebhook"
+      }
+    }
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "azureeventgrid_1": {
+          "connectionId": "/subscriptions/908894ac-5f7e-40ea-ab31-f2cdf88a53e3/resourceGroups/rg-secret-logicapp-sendmail/providers/Microsoft.Web/connections/azureeventgrid-1",
+          "connectionName": "azureeventgrid-1",
+          "connectionProperties": {
+            "authentication": {
+              "type": "ManagedServiceIdentity"
+            }
+          },
+          "id": "/subscriptions/908894ac-5f7e-40ea-ab31-f2cdf88a53e3/providers/Microsoft.Web/locations/northeurope/managedApis/azureeventgrid"
+        },
+        "outlook": {
+          "connectionId": "/subscriptions/908894ac-5f7e-40ea-ab31-f2cdf88a53e3/resourceGroups/rg-secret-logicapp-sendmail/providers/Microsoft.Web/connections/outlook",
+          "connectionName": "outlook",
+          "id": "/subscriptions/908894ac-5f7e-40ea-ab31-f2cdf88a53e3/providers/Microsoft.Web/locations/northeurope/managedApis/outlook"
+        }
+      }
+    }
+  }
+}

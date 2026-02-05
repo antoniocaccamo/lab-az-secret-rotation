@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>work.antoniocaccamo.labs</groupId>
+        <artifactId>lab-azure-secret-rotation</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+
+    <artifactId>lab-azure-secret-rotation-enterprise-app</artifactId>
+    <name>lab :: azure :: secret rotation :: enterprise-app</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+    </properties>
+
+    <modules>
+        <module>lab-azure-secret-rotation-enterprise-app-check</module>
+        <module>lab-azure-secret-rotation-enterprise-app-rotate</module>
+    </modules>
+
+    <build>
+
+        <plugins>
+            <!-- 
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-maven.version}</version>
+                <configuration>
+                    <suppressionFiles>
+                        <suppressionFile>${project.parent.basedir}/dependency-cpe-suppression.xml</suppressionFile>
+                    </suppressionFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> 
+            -->
+        </plugins>
+
+    </build>
+</project>

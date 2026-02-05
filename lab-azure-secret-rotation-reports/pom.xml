@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>work.antoniocaccamo.labs</groupId>
+        <artifactId>lab-azure-secret-rotation</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>lab-azure-secret-rotation-reports</artifactId>
+
+    <name>lab :: azure :: secret rotation :: reports</name>
+
+    <properties>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>work.antoniocaccamo.labs</groupId>
+            <artifactId>lab-azure-secret-rotation-commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>work.antoniocaccamo.labs</groupId>
+            <artifactId>lab-azure-secret-rotation-keyvault</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>work.antoniocaccamo.labs</groupId>
+            <artifactId>lab-azure-secret-rotation-enterprise-app-check</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>work.antoniocaccamo.labs</groupId>
+            <artifactId>lab-azure-secret-rotation-enterprise-app-rotate</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <configuration>
+                            <dataFileIncludes>
+                                <dataFileInclude>**/**/jacoco.exec</dataFileInclude>
+                            </dataFileIncludes>
+                            <outputDirectory>${project.parent.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <!-- 
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-maven.version}</version>
+                <configuration>
+                    <outputDirectory>${project.parent.reporting.outputDirectory}/dependency-check</outputDirectory>
+                    <suppressionFiles>
+                        <suppressionFile>${project.parent.basedir}/dependency-cpe-suppression.xml</suppressionFile>
+                    </suppressionFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>report</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> 
+            -->
+
+        </plugins>
+
+    </build>
+    
+</project>

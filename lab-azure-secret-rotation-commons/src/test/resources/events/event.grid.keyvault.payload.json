@@ -1,0 +1,18 @@
+{
+   "topic": "\/subscriptions\/908894ac-5f7e-40ea-ab31-f2cdf88a53e3\/resourceGroups\/rg-secret-rotation\/providers\/Microsoft.KeyVault\/vaults\/kv-secret-rotationtm4cy6",
+   "subject": "new-magic-secret",
+   "eventType": "Microsoft.KeyVault.SecretNewVersionCreated",
+   "eventTime": "2023-09-08T16:14:04.007449585Z",
+   "id": "c38f30e8-80ee-4dec-a96a-82efc16b08c0",
+   "dataVersion": "1",
+   "metadataVersion": "1",
+   "data": {
+      "Id": "https:\/\/kv-secret-rotationtm4cy6.vault.azure.net\/secrets\/new-magic-secret\/8f71f93cc1744e89b2a577e1470b2022",
+      "VaultName": "kv-secret-rotationtm4cy6",
+      "ObjectType": "Secret",
+      "ObjectName": "new-magic-secret",
+      "Version": "8f71f93cc1744e89b2a577e1470b2022",
+      "NBF": null,
+      "EXP": 1.757952762E9
+   }
+}

@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    
+
+    <groupId>work.antoniocaccamo.labs</groupId>
+    <artifactId>lab-azure-secret-rotation</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>lab :: azure :: secret rotation</name>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version>
+        
+
+        <!--   azure     -->
+        <azure-sdk-bom.version>1.2.17</azure-sdk-bom.version>
+        <azure-functions-java-library.version>3.0.0</azure-functions-java-library.version>
+        <azure-security-keyvault-secrets.version>4.6.5</azure-security-keyvault-secrets.version>
+        <azure-identity.version>1.11.1</azure-identity.version>
+        <azure-communication-email.version>1.0.5</azure-communication-email.version>
+        <msal4j.version>1.19.1</msal4j.version>
+        <microsoft-graph.version>5.77.0</microsoft-graph.version>
+        <azure-resourcemanager-authorization.version>2.34.0</azure-resourcemanager-authorization.version>
+
+
+        <!--   quarkus     -->
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+        <quarkus.platform.version>3.6.4</quarkus.platform.version>
+
+        <!--    libs    -->
+        <jakarta.interceptor-api.version>2.1.0</jakarta.interceptor-api.version>
+        <commons-lang3.version>3.13.0</commons-lang3.version>
+        <lombok.version>1.18.30</lombok.version>
+        <logback-classic.version>1.4.8</logback-classic.version>
+        <quarkus-freemarker.version>1.0.0</quarkus-freemarker.version>
+        <okio.version>1.17.6</okio.version>
+        <okhttp.version>4.12.0</okhttp.version>
+        <jackson.version>2.16.0</jackson.version>
+
+        <!--    plugins     -->
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
+        <asm.version>9.5</asm.version>
+        <jandex-maven-plugin.version>3.1.2</jandex-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.7.3.5</spotbugs-maven-plugin.version>
+        <findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
+        <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
+        <dependency-check-maven.version>9.0.6</dependency-check-maven.version>
+        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+        <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
+
+        <azure-functions-maven-plugin.version>1.26.0</azure-functions-maven-plugin.version>
+
+        <!-- test libs -->
+        <assertj-core.version>3.24.2</assertj-core.version>
+        <mockito-core.version>2.23.4</mockito-core.version>
+        <junit-jupiter.version>5.4.2</junit-jupiter.version>
+        <assertj-core.version>3.24.2</assertj-core.version>
+        <junit.version>4.13.2</junit.version>
+    </properties>
+
+
+    <modules>
+        <module>lab-azure-secret-rotation-commons</module>
+        <module>lab-azure-secret-rotation-keyvault</module>
+        <module>lab-azure-secret-rotation-enterprise-app</module>
+        <!-- -->
+        <module>lab-azure-secret-rotation-reports</module>
+    </modules>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+
+        </dependency>
+    </dependencies>
+
+
+    <dependencyManagement>
+
+        <dependencies>
+
+            <dependency>
+                <groupId>work.antoniocaccamo.labs</groupId>
+                <artifactId>lab-azure-secret-rotation-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>work.antoniocaccamo.labs</groupId>
+                <artifactId>lab-azure-secret-rotation-keyvault</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>work.antoniocaccamo.labs</groupId>
+                <artifactId>lab-azure-secret-rotation-enterprise-app-check</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>work.antoniocaccamo.labs</groupId>
+                <artifactId>lab-azure-secret-rotation-enterprise-app-rotate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!--
+                ===== quarkus
+            -->
+            <dependency>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>${quarkus.platform.artifact-id}</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.dataformat</groupId>
+                        <artifactId>jackson-dataformat-xml</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>io.quarkiverse.freemarker</groupId>
+                <artifactId>quarkus-freemarker</artifactId>
+                <version>${quarkus-freemarker.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-sdk-bom</artifactId>
+                <version>${azure-sdk-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>com.azure</groupId>-->
+<!--                        <artifactId>azure-identity</artifactId>-->
+<!--                    </exclusion>-->
+
+<!--                </exclusions>-->
+            </dependency>
+
+            <!--
+                ===== azure
+            -->
+            <dependency>
+                <groupId>com.microsoft.azure.functions</groupId>
+                <artifactId>azure-functions-java-library</artifactId>
+                <version>${azure-functions-java-library.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.azure.resourcemanager</groupId>
+                <artifactId>azure-resourcemanager-authorization</artifactId>
+                <version>${azure-resourcemanager-authorization.version}</version>
+            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>com.azure</groupId>-->
+<!--                <artifactId>azure-identity</artifactId>-->
+<!--                <version>${azure-identity.version}</version>-->
+<!--            </dependency>-->
+
+            <dependency>
+                <groupId>com.microsoft.azure</groupId>
+                <artifactId>msal4j</artifactId>
+                <version>${msal4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.microsoft.graph</groupId>
+                <artifactId>microsoft-graph</artifactId>
+                <version>${microsoft-graph.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.squareup.okio</groupId>
+                        <artifactId>okio</artifactId>
+                    </exclusion>
+<!--                    <exclusion>-->
+<!--                        <groupId>com.squareup.okhttp3</groupId>-->
+<!--                        <artifactId>okhttp</artifactId>-->
+<!--                    </exclusion>-->
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>${okio.version}</version>
+            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>com.squareup.okhttp3</groupId>-->
+<!--                <artifactId>okhttp</artifactId>-->
+<!--                <version>4.11.0</version>-->
+<!--            </dependency>-->
+
+<!--            <dependency>-->
+<!--                <groupId>com.microsoft.azure.functions</groupId>-->
+<!--                <artifactId>azure-functions-java-spi</artifactId>-->
+<!--                <version>${azure-functions-java-spi.version}</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
+
+<!--            <dependency>-->
+<!--                <groupId>jakarta.interceptor</groupId>-->
+<!--                <artifactId>jakarta.interceptor-api</artifactId>-->
+<!--                <version>${jakarta.interceptor-api.version}</version>-->
+<!--            </dependency>-->
+
+<!--&lt;!&ndash;            <dependency>&ndash;&gt;-->
+<!--                <groupId>ch.qos.logback</groupId>-->
+<!--                <artifactId>logback-classic</artifactId>-->
+<!--                <version>${logback-classic.version}</version>-->
+<!--            </dependency>-->
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source> <!-- depending on your project -->
+                    <target>${java.version}</target> <!-- depending on your project -->
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                        <arg>-Xlint:all</arg>
+                    </compilerArgs>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+
+            <!-- SpotBugs Static Analysis -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>medium</threshold>
+                    <failOnError>true</failOnError>
+
+                    <includeFilterFile>${project.basedir}/spotbugs-security-include.xml</includeFilterFile>
+                    <excludeFilterFile>${project.basedir}/spotbugs-security-exclude.xml</excludeFilterFile>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>${findsecbugs-plugin.version}</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+            </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.owasp</groupId>-->
+<!--                <artifactId>dependency-check-maven</artifactId>-->
+<!--                <version>${dependency-check-maven.version}</version>-->
+<!--                <configuration>-->
+<!--                    <failBuildOnCVSS>8</failBuildOnCVSS>-->
+<!--                    <suppressionFiles>-->
+<!--                        <suppressionFile>${project.basedir}/dependency-cpe-suppression.xml</suppressionFile>-->
+<!--                    </suppressionFiles>-->
+
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>install</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>aggregate</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>${asm.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>tree</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>tree</goal>
+                        </goals>
+                        <configuration>
+
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>${dependency-check-maven.version}</version>
+                    <configuration>
+                        <nvdApiServerId>nvd</nvdApiServerId>
+                        <skipSystemScope>true</skipSystemScope>
+                        <format>HTML</format>
+                        <failBuildOnCVSS>8</failBuildOnCVSS>
+                        <nvdApiDelay>10000</nvdApiDelay>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>${spotless-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>process-sources</phase>
+                            <goals>
+<!--                                <goal>check</goal>-->
+                                <goal>apply</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

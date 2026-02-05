@@ -1,0 +1,5 @@
+{
+  "principalId" : "$principalId",
+  "resourceId"  : "$graphId",
+  "appRoleId"   : "${appRoleId}"
+}

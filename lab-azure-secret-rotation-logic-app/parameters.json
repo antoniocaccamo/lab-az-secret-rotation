@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "connections_outlook_name": {
+            "value": null
+        },
+        "connections_azureeventgrid_1_name": {
+            "value": null
+        },
+        "workflows_secret_logicapp_mail_send_name": {
+            "value": null
+        },
+        "topics_evtgrid_secret_logicapp_sendmail_topic_name": {
+            "value": null
+        },
+        "userAssignedIdentities_mi_secret_rotation_enterprise_app_rotate_name": {
+            "value": null
+        }
+    }
+}

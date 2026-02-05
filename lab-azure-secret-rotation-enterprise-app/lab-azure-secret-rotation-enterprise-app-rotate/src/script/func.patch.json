@@ -1,0 +1,1 @@
+{ "properties": { "keyVaultReferenceIdentity": "/subscriptions/908894ac-5f7e-40ea-ab31-f2cdf88a53e3/resourcegroups/rg-secret-rotation/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-func-enterprise-app-secret-check"} }
