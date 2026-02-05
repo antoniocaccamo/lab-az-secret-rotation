@@ -60,7 +60,7 @@
         <azure-functions-maven-plugin.version>1.26.0</azure-functions-maven-plugin.version>
 
         <!-- test libs -->
-        <assertj-core.version>3.24.2</assertj-core.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
         <mockito-core.version>2.23.4</mockito-core.version>
         <junit-jupiter.version>5.4.2</junit-jupiter.version>
         <assertj-core.version>3.24.2</assertj-core.version>
